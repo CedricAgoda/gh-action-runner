@@ -16,9 +16,9 @@ on:
 env:
   # TODO: Change variable to your image's name.
   IMAGE_NAME: gh-actions-runner
-  GHAR_VERSION: 2.274.1
-  GHAR_SERIES: v2.274.1
-  GHAR_TAG: 2.274
+  GHAR_VERSION: 2.272.0
+  GHAR_SERIES: v2.272.0
+  GHAR_TAG: 2.272
 
 jobs:
   push:
