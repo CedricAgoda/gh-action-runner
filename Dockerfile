@@ -5,10 +5,11 @@ ENV DEBIAN_FRONTEND=noninteractive
 LABEL maintainer="Cedric Rochefolle"
 
 RUN apt-get update \
-    && apt-get install apt-utils -y \
+    && apt-get install apt-utils apt-transport-https \
+    ca-certificates curl gnupg-agent software-properties-common -y \
     && apt-get upgrade -y \
     && apt-get autoremove --purge -y \
-    && apt-get install locales curl tzdata -y \
+    && apt-get install locales tzdata -y \
     && rm -Rf /var/cache/apt/* /var/lib/apt/lists/*
 
 # Setup en_US.UTF8 as locale and Thailand as timezone
@@ -18,18 +19,24 @@ RUN echo "Asia/Bangkok" > /etc/timezone \
     && rm -f /etc/localtime \
     && dpkg-reconfigure tzdata
 
+# Install Ubuntu
+RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - \
+    && add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable" \
+    && apt-get update \
+    && apt-get install docker-ce docker-ce-cli containerd.io -y
+
 # Create GitHub Actions Runner
 RUN mkdir /opt/actions-runner
 WORKDIR /opt/actions-runner
 
-ENV GHAR_SERIES="v2.272.0"
-ENV GHAR_VERSION="2.272.0"
+ARG GHAR_SERIES=v2.272.0
+ARG GHAR_VERSION=2.272.0
 
 RUN cd /opt/actions-runner \
-    && curl -s -O -L https://github.com/actions/runner/releases/download/${GHAR_SERIES}/actions-runner-linux-x64-${GHAR_VERSION}.tar.gz \
-    && tar -zxf actions-runner-linux-x64-${GHAR_VERSION}.tar.gz \
+    && curl -s -O -L "https://github.com/actions/runner/releases/download/${GHAR_SERIES}/actions-runner-linux-x64-${GHAR_VERSION}.tar.gz" \
+    && tar -zxf "actions-runner-linux-x64-${GHAR_VERSION}.tar.gz" \
     && ./bin/installdependencies.sh \
-    && rm actions-runner-linux-x64-${GHAR_VERSION}.tar.gz
+    && rm "actions-runner-linux-x64-${GHAR_VERSION}.tar.gz"
 
 # Configure and start Actions Runner
 RUN useradd -m -U ghactions \
