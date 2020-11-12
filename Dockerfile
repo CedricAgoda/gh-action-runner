@@ -19,12 +19,6 @@ RUN echo "Asia/Bangkok" > /etc/timezone \
     && rm -f /etc/localtime \
     && dpkg-reconfigure tzdata
 
-# Install Ubuntu
-RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - \
-    && add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable" \
-    && apt-get update \
-    && apt-get install docker-ce docker-ce-cli containerd.io -y
-
 # Create GitHub Actions Runner
 RUN mkdir /opt/actions-runner
 WORKDIR /opt/actions-runner
